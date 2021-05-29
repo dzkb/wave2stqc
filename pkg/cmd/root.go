@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/dzkb/wave2stqc/pkg/wave"
 	"github.com/spf13/cobra"
 )
 
@@ -18,6 +19,16 @@ var rootCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println(args)
 		fmt.Println(sampleRate)
+
+		ch := make(chan []byte)
+		go wave.ReadWave(os.Stdin, ch, 128)
+
+		for {
+			data := <-ch
+			if len(data) > 0 {
+				fmt.Println(data)
+			}
+		}
 	},
 }
 
